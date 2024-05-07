@@ -5,7 +5,7 @@ import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import Provider from "../components/sessionProvider";
 
 export const metadata: Metadata = {
-  title: "Pin-Map",
+  title: "road-report-pin-map",
   description: "Pin any location!",
 };
 

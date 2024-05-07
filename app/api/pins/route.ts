@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     INNER JOIN users ON pins.user_id = users.id 
     WHERE LOWER(category) LIKE LOWER(${"%" + category + "%"})
     AND LOWER(pin_name) LIKE LOWER(${"%" + pin_name + "%"})
-    AND LOWER(users.name) LIKE LOWER(${"%" + user + "%"})
+    AND LOWER(users.id) LIKE LOWER(${"%" + user + "%"})
     `;
     return Response.json(data.rows);
   } catch (error) {
