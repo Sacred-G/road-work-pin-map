@@ -8,7 +8,7 @@ export function formatDateTime(dateString: string): string {
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-    hour12: false, // Change to true if you want 12-hour format
+    hour12: true, // Change to true if you want 12-hour format
   });
 
   return formattedDate;
