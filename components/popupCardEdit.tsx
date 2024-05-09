@@ -26,7 +26,8 @@ export default function PopupCardEdit({
   setIsEditing: (isEditing: boolean) => void;
   setPopupInfo: (info: any) => void;
 }) {
-  const [visible, { toggle }] = useDisclosure(false);
+  const [visible, setVisible] = useDisclosure(false);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm({
     initialValues: {
@@ -40,15 +41,18 @@ export default function PopupCardEdit({
   });
 
   const handleSubmit = async (formValues: any) => {
-    toggle();
+    setVisible.open();;
     try {
       const res = await editPin(formValues);
       setIsEditing(false);
       fetchPins();
       setPopupInfo(res);
-      toggle();
+      form.reset();
     } catch (error) {
       console.error(error);
+      setError("Failed to edit the pin. Please try again.");
+    } finally {
+      setVisible.close();
     }
   };
 
@@ -61,6 +65,7 @@ export default function PopupCardEdit({
             zIndex={1000}
             overlayProps={{ radius: "sm", blur: 2 }}
           />
+          {error && <div style={{ color: 'red', marginBottom: 10 }}>{error}</div>}
           <Stack gap={10}>
             <TextInput
               label="Image URL"

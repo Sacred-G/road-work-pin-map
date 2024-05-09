@@ -1,5 +1,6 @@
-import NextAuth, { AuthOptions, NextAuthOptions } from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google"; // Import GoogleProvider
 import { findUserByEmail } from "@/lib/data";
 import { createUser } from "@/lib/actions";
 
@@ -9,10 +10,15 @@ const authOptions: NextAuthOptions = {
       clientId: process.env.GITHUB_ID ?? "",
       clientSecret: process.env.GITHUB_SECRET ?? "",
     }),
+    GoogleProvider({ // Add GoogleProvider configuration
+      clientId: process.env.GOOGLE_ID ?? "",
+      clientSecret: process.env.GOOGLE_SECRET ?? "",
+    }),
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      if (account?.provider === "github") {
+      // Handle sign-in for both GitHub and Google
+      if (account?.provider === "github" || account?.provider === "google") {
         const email = user.email;
         let existingUser = await findUserByEmail(email ?? "");
         if (!existingUser) {
