@@ -37,7 +37,7 @@ export default function MapComponent() {
   const searchParams = useSearchParams();
   const [pinsData, setPinsData] = useState([]);
 
-  const fetchPins = async () => {
+  const fetchPins = React.useCallback(async () => {
     setIsLoading(true);
     try {
       const category = searchParams.get("category");
@@ -49,19 +49,19 @@ export default function MapComponent() {
       console.error(error);
     }
     setIsLoading(false);
-  };
+  }, [searchParams]); 
 
   useEffect(() => {
     setPinsData([]);
     fetchPins();
-  }, [searchParams]);
+  }, [fetchPins, searchParams]);
 
   const geoControlRef = useRef<maplibregl.GeolocateControl | null>(null);
 
   useEffect(() => {
     // make geolocate trigger on load
     geoControlRef.current?.trigger();
-  }, [geoControlRef.current]);
+  }, []);
 
   return (
     <>

@@ -17,6 +17,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/react-map-gl": "^6.1.6",
     "@vercel/postgres": "^0.5.1",
+    "mapbox-gl": "^3.3.0",
     "maplibre-gl": "^3.6.2",
     "next": "14.0.4",
     "next-auth": "^4.24.5",
