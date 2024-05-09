@@ -27,7 +27,7 @@ const authOptions: NextAuthOptions = {
           return true;
         }
       }
-      return false;
+      return true;
     },
 
     async session({ session, user }) {
