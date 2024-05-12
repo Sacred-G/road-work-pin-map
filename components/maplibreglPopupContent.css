@@ -5,32 +5,6 @@
   box-shadow: none;
   width:100%;
   height:auto;
-  fit:cover;
+  fit:contain;
   display:flex;
-}
-.maplibregl-popup-content {
-  display: flex;
-  flex-direction: column; /* Stacks elements vertically */
-  align-items: center; /* Centers elements horizontally */
-  justify-content: space-around; /* Distributes space around elements */
-  width: 100%;
-  height: 100vh; /* Full viewport height */
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.image {
-  max-width: 100%; /* Ensures the image is responsive */
-  height: auto;
- 
-}
-
-.form {
-  width: 100%; /* Adjusts form width to fit the container */
-  max-width: 580px; /* Maximum width */
-  margin: 20px 0;
-}
-
-.text {
-  text-align: center;
 }
