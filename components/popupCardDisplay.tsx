@@ -8,7 +8,7 @@ export default function PopupCardDisplay({ popupInfo }: { popupInfo: any }) {
         <Image
           src={popupInfo.image_url}
           alt={popupInfo.pin_name}
-          height={350}
+          height={auto}
           width={450}
          
         />
@@ -25,7 +25,7 @@ export default function PopupCardDisplay({ popupInfo }: { popupInfo: any }) {
           ))}
       </Group>
 
-      <Spoiler maxHeight={920} showLabel="Show more" hideLabel="Hide">
+      <Spoiler maxHeight={720} showLabel="Show more" hideLabel="Hide">
         <Text c="#555" size="lg">
           {popupInfo.description}
         </Text>
