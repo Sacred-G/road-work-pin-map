@@ -22,7 +22,7 @@
 .image {
   max-width: 100%; /* Ensures the image is responsive */
   height: auto;
-  object-fit: cover;
+ 
 }
 
 .form {
