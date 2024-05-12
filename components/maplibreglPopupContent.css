@@ -3,6 +3,8 @@
   background: none;
   border: none;
   box-shadow: none;
-  width:580px;
+  width:100%;
+  height:auto;
   fit:cover;
+  display:flex;
 }
