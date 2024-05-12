@@ -9,7 +9,7 @@ export default function PopupCardDisplay({ popupInfo }: { popupInfo: any }) {
           src={popupInfo.image_url}
           alt={popupInfo.pin_name}
           height={350}
-          width={600}
+          width={450}
          
         />
       </Card.Section>
