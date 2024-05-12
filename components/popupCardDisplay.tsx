@@ -3,17 +3,17 @@ import { formatDateTime } from "../lib/utils";
 
 export default function PopupCardDisplay({ popupInfo }: { popupInfo: any }) {
   return (
-    <Card shadow="lg" padding="lg" radius="lg" withBorder>
+    <Card shadow="md" padding="md" radius="md" withBorder>
       <Card.Section>
         <Image
           src={popupInfo.image_url}
           alt={popupInfo.pin_name}
-          height={150}
-          width={150}
+          height={100}
+          width={100}
          
         />
       </Card.Section>
-      <Text fw={500} size="lg">
+      <Text fw={500} size="md">
         {popupInfo.pin_name}
       </Text>
       <Group gap={5}>
@@ -25,8 +25,8 @@ export default function PopupCardDisplay({ popupInfo }: { popupInfo: any }) {
           ))}
       </Group>
 
-      <Spoiler maxHeight={720} showLabel="Show more" hideLabel="Hide">
-        <Text c="#555" size="lg">
+      <Spoiler maxHeight={520} showLabel="Show more" hideLabel="Hide">
+        <Text c="#555" size="md">
           {popupInfo.description}
         </Text>
       </Spoiler>
