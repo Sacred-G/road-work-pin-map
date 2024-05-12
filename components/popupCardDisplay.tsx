@@ -8,7 +8,7 @@ export default function PopupCardDisplay({ popupInfo }: { popupInfo: any }) {
         <Image
           src={popupInfo.image_url}
           alt={popupInfo.pin_name}
-          height={auto}
+          height={450}
           width={450}
          
         />
