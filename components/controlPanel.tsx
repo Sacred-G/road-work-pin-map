@@ -2,6 +2,7 @@ import * as React from "react";
 import { Stack, Button, Text, Box, LoadingOverlay } from "@mantine/core";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import './glassEffect.css'; // Import the new CSS file
 
 function round5(value: number) {
   return (Math.round(value * 1e5) / 1e5).toFixed(5);
@@ -21,7 +22,7 @@ function ControlPanel(props: ControlPanelProps) {
   if (status === "authenticated" && session?.user?.id) {
     return (
       <Box
-        bg={"white"}
+        className="glass-effect" // Apply the glass effect class
         style={{
           position: "absolute",
           top: "10px",
@@ -30,7 +31,7 @@ function ControlPanel(props: ControlPanelProps) {
           boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <Stack className="control-panel" p={10} gap={5}>
+        <Stack p={10} gap={5}>
           <Text size="lg" fw={700}>
             Pin location
           </Text>

@@ -1,3 +1,4 @@
+'use client'
 import MapComponent from "../../components/mapComponent";
 import { Box, Skeleton } from "@mantine/core";
 import { Suspense } from "react";

@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "@mantine/form";
 
+import "./glassEffect.css";  // Import the new CSS file
 import { fetchCategories } from "@/lib/data";
 import { fetchUsers } from "@/lib/data";
 import { fetchPinsList } from "@/lib/data";
@@ -109,11 +110,11 @@ export default function Navbar() {
         style={{ zIndex: 4 }}
       ></Burger>
       <Flex
+        className="glass-effect" // Apply the glass effect class
         direction="column"
         py={10}
         w={220}
         h={"100vh"}
-        bg={"white"}
         justify={"space-between"}
         pos={"absolute"}
         style={{ zIndex: 3 }}

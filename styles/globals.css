@@ -1,0 +1,21 @@
+
+/* Your custom styles */
+
+
+.marker {
+  z-index: 1; /* Setting the stack order of the marker element */
+}
+
+.marker:hover {
+  z-index: 10; /* Changing the stack order of the marker element on hover */
+}
+
+
+.glass-effect {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+
+}

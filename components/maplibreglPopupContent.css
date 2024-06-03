@@ -1,10 +1,43 @@
+/* Styling for the map popup content */
 .maplibregl-popup-content {
-  padding: 5px;
+  padding: 0;
   background: none;
   border: none;
   box-shadow: none;
-  width:100%;
-  height:auto;
-  fit:contain;
-  display:flex;
+  max-width: 45vw;
+  border-radius:3px;
+  width:35vw;
+  z-index: 1;
 }
+
+/* Styling for map marker popups */
+.m_e615b15f mantine-Card-root m_1b7284a3 mantine-Paper-root{
+  width:50vw
+
+}
+
+/* Styling for map markers */
+.marker {
+  z-index: 1; /* Adjust this value as needed */
+}
+
+/* Styling for hovered map markers */
+.marker:hover {
+  z-index: 10; /* Higher value for hovered markers, if needed */
+}
+
+/* General map styling */
+
+
+.maplibregl-popup{
+  z-index:1;
+  max-width:50vw;
+  height: auto;
+}
+.m_9e117634 {
+  display: block;
+  flex: 0 1;
+  object-fit: var(--image-object-fit, cover);
+  width: 100%;
+  border-radius: var(--image-radius, 0);
+  height: auto;}

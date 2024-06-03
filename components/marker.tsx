@@ -21,7 +21,7 @@ export default function MapMarkers({
     () =>
       pinsData.map((city) => (
         <Marker
-          style={{ zIndex: 2 }}
+          style={{ zIndex: 1 }}
           key={city.id}
           longitude={city.longitude}
           latitude={city.latitude}
@@ -31,7 +31,7 @@ export default function MapMarkers({
             setPopupInfo(city);
           }}
         >
-          <Pin size={20} />
+          <Pin size={40} />
         </Marker>
       )),
     [pinsData, setPopupInfo]
