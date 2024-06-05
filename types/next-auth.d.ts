@@ -1,7 +1,7 @@
 // types/next-auth.d.ts
 import NextAuth from "next-auth";
 import { Session } from "next-auth";
-
+declare module '@mapbox/mapbox-gl-directions'
 declare module '@lib/useGoogleMaps';
 declare module "next-auth" {
   /**

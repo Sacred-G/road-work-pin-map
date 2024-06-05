@@ -8,6 +8,7 @@ import Map, {
   Popup,
 } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
+import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
 import "./maplibreglPopupContent.css";
 import { useSearchParams } from "next/navigation";
 import { LoadingOverlay } from "@mantine/core";
@@ -18,7 +19,12 @@ import PopupCard from "./popupCard";
 import PopupForm from "./popupForm";
 
 import { fetchPinsData } from "@/lib/data";
-import './glassEffect.css';
+import "./glassEffect.css";
+import "./mapbox-directions.css"
+import mapboxgl from "mapbox-gl";
+import MapboxDirections from "@lib/mapbox-directions";
+
+mapboxgl.accessToken = "pk.eyJ1Ijoic2JvdWxkaW4iLCJhIjoiY2x2ajMxdHUyMTkxMDJpcHUydzZxMzV4ZSJ9.lsPxcmST-IYlN7BgejSRhw";
 
 export default function MapComponent() {
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -31,7 +37,7 @@ export default function MapComponent() {
     terrain: "https://api.maptiler.com/maps/terrain/style.json?key=z77nEry6rP70PZq17SYM",
     satellite: "https://api.maptiler.com/maps/satellite/style.json?key=z77nEry6rP70PZq17SYM",
     streets_dark: "https://api.maptiler.com/maps/d8267d89-7919-4698-995b-ac6330ebfc97/style.json?key=z77nEry6rP70PZq17SYM",
-    dataviz_dark: "https://api.maptiler.com/maps/dataviz-dark/style.json?key=z77nEry6rP70PZq17SYM"
+    dataviz_dark: "https://api.maptiler.com/maps/dataviz-dark/style.json?key=z77nEry6rP70PZq17SYM",
   };
 
   type MapStyleKey = keyof typeof mapStyles;
@@ -48,9 +54,9 @@ export default function MapComponent() {
   };
 
   const [viewState, setViewState] = useState({
-    longitude: 0,
-    latitude: 0,
-    zoom: 0,
+    longitude: -86.4512,
+    latitude: 34.6568,
+    zoom: 7,
   });
 
   const searchParams = useSearchParams();
@@ -76,11 +82,28 @@ export default function MapComponent() {
   }, [fetchPins, searchParams]);
 
   const geoControlRef = useRef<maplibregl.GeolocateControl | null>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
 
   useEffect(() => {
     // make geolocate trigger on load
     geoControlRef.current?.trigger();
-  }, []);
+
+    if (mapRef.current) {
+      const directions = new MapboxDirections({
+        accessToken: mapboxgl.accessToken,
+      });
+
+      mapRef.current.addControl(directions, "bottom-right");
+
+      // Prevent pointer events on directions control
+      const directionsControlElement = document.querySelector(".mapboxgl-ctrl-directions");
+      if (directionsControlElement) {
+        directionsControlElement.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+      }
+    }
+  }, [mapRef.current]);
 
   return (
     <>
@@ -99,7 +122,7 @@ export default function MapComponent() {
             left: "50%",
             transform: "translateX(-50%)",
             padding: "5px 10px",
-            boxShadow: "0 1px 3px rgba(0, 0, 0, 0.3)"
+            boxShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
           }}
         >
           <div id="mapStyleContainer">
@@ -121,6 +144,7 @@ export default function MapComponent() {
           style={{ height: "100%", position: "absolute", top: 0, left: 0 }}
           mapStyle={mapStyle}
           onMove={(e) => setViewState(e.viewState)}
+          ref={mapRef}
         >
           <PopupForm
             latitude={viewState.latitude}
@@ -196,6 +220,10 @@ export default function MapComponent() {
             flex-direction: row;
             flex-wrap: wrap;
           }
+        }
+
+        .directions-control {
+          pointer-events: auto;
         }
       `}</style>
     </>
