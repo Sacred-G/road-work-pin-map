@@ -1,46 +1,29 @@
-'use client'
+"use client"
 
 import React, { useState } from 'react';
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
-import "../../styles/globals.css";
+import "../../styles/globals.css"; // Ensure this path is correct
 import Navbar from "../../components/navbar";
-interface ViewState {
-  longitude: number;
-  latitude: number;
-  zoom: number;
-}
+import Head from 'next/head';
 
-interface NavbarProps {
-  setViewState: React.Dispatch<React.SetStateAction<ViewState>>;
-  // Include other existing props here
-}
-export default function RootLayout({
-  children
-}: {
-  children: React.ReactNode;
-}) {
-  const [viewState, setViewState] = useState<{
-    longitude: number;
-    latitude: number;
-    zoom: number;
-  }>({
-    longitude: 0,
-    latitude: 0,
-    zoom: 10
-  });
+
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+ 
 
   return (
-    <html lang="en">
-      <head>
+    <>
+      <Head>
+        <meta charSet="utf-8" />
+        <title>My App</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <ColorSchemeScript />
-      </head>
-      <body>
-        <MantineProvider>
-          <Navbar />
-          {children}
-        </MantineProvider>
-      </body>
-    </html>
+      </Head>
+      <MantineProvider>
+        <Navbar/>
+        <div>{children}</div>
+      </MantineProvider>
+    </>
   );
 }
