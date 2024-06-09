@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, Suspense } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { IconChevronRight } from "@tabler/icons-react";
 import {
@@ -16,22 +16,59 @@ import {
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "@mantine/form";
+import "./glassEffect.css";
+import { fetchCategories, fetchUsers, fetchPinsList } from "@/lib/data";
+import mapboxgl from "mapbox-gl";
 
-import "./glassEffect.css";  // Import the new CSS file
-import { fetchCategories } from "@/lib/data";
-import { fetchUsers } from "@/lib/data";
-import { fetchPinsList } from "@/lib/data";
+mapboxgl.accessToken = "pk.eyJ1Ijoic2JvdWxkaW4iLCJhIjoiY2x2ajMxdHUyMTkxMDJpcHUydzZxMzV4ZSJ9.lsPxcmST-IYlN7BgejSRhw";
+
+// Wrapper component to handle search params
+function SearchParamsWrapper({ children }: { children: (params: URLSearchParams) => React.ReactNode }) {
+  const searchParams = useSearchParams();
+  return <>{children(searchParams)}</>;
+}
 
 export default function Navbar() {
   const { data: session, status } = useSession();
   const userName = session?.user?.name;
   const userIcon = session?.user?.image;
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const [categories, setCategories] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [pinsList, setPinsList] = useState([]);
+  const [isHidden, setIsHidden] = useState(true);
+  const smallDisplay = useMediaQuery("(max-width: 830px)");
 
+  // State to hold search parameters
+  const [searchParams, setSearchParams] = useState<URLSearchParams>(() => {
+    if (typeof window !== "undefined") {
+      return new URLSearchParams(window.location.search);
+    } else {
+      return new URLSearchParams();
+    }
+  });
+
+  // Fetch pins based on search parameters
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const fetchData = async () => {
+        try {
+          const category = searchParams.get("category");
+          const user = searchParams.get("user");
+          const pin_name = searchParams.get("pin_name");
+          const pins = await fetchPinsList(category, user, pin_name);
+          setPinsList(pins);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchData();
+    }
+  }, [searchParams]);
+
+  // Form initialization
   const form = useForm({
     initialValues: {
       category: searchParams.get("category") || "",
@@ -40,61 +77,14 @@ export default function Navbar() {
     },
   });
 
-  const [categories, setCategories] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [pinsList, setPinsList] = useState([]);
-  const [isHidden, setIsHidden] = useState(true);
-  const smallDisplay = useMediaQuery("(max-width: 830px)");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const categories = await fetchCategories();
-        setCategories(categories);
-        const users = await fetchUsers();
-        setUsers(users);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const category = searchParams.get("category");
-        const user = searchParams.get("user");
-        const pin_name = searchParams.get("pin_name");
-        const pins = await fetchPinsList(category, user, pin_name);
-        setPinsList(pins);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchData();
-  }, [searchParams]);
-
-  const handleSubmit = ({
-    category,
-    user,
-    pin_name,
-  }: {
-    category: string;
-    user: string;
-    pin_name: string;
-  }) => {
+  // Handle form submission
+  const handleSubmit = (values: { category: string; user: string; pin_name: string }) => {
     const params = new URLSearchParams();
-    if (category.length > 0) {
-      params.set("category", category);
-    }
-    if (user.length > 0) {
-      params.set("user", user);
-    }
-    if (pin_name.length > 0) {
-      params.set("pin_name", pin_name);
-    }
+    if (values.category) params.set("category", values.category);
+    if (values.user) params.set("user", values.user);
+    if (values.pin_name) params.set("pin_name", values.pin_name);
     router.push("map?" + params.toString());
+    setSearchParams(params); // Update the state
   };
 
   return (
@@ -108,9 +98,9 @@ export default function Navbar() {
         onClick={() => setIsHidden(!isHidden)}
         display={smallDisplay ? "flex" : "none"}
         style={{ zIndex: 4 }}
-      ></Burger>
+      />
       <Flex
-        className="glass-effect" // Apply the glass effect class
+        className="glass-effect"
         direction="column"
         py={10}
         w={220}
@@ -121,7 +111,7 @@ export default function Navbar() {
         px={10}
         display={smallDisplay ? (isHidden ? "none" : "flex") : "flex"}
       >
-        <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+        <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack gap={"md"} pt={30}>
             <Autocomplete
               label="Search"
@@ -154,7 +144,7 @@ export default function Navbar() {
           <Divider />
           {status === "authenticated" && (
             <Group wrap="nowrap">
-              <Avatar variant="filled" radius={"xl"} src={userIcon}></Avatar>
+              <Avatar variant="filled" radius={"xl"} src={userIcon} />
               <NavLink
                 component={Link}
                 href="/login"

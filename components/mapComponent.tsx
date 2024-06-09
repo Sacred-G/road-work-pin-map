@@ -2,23 +2,27 @@
 
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
-import Map, {
-  NavigationControl,
-  GeolocateControl,
-  Popup,
-} from "react-map-gl/maplibre";
+import Map, { NavigationControl, GeolocateControl, Popup, MapRef } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
+import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
 import "./maplibreglPopupContent.css";
 import { useSearchParams } from "next/navigation";
 import { LoadingOverlay } from "@mantine/core";
-
 import ControlPanel from "./controlPanel";
 import MapMarkers from "./marker";
 import PopupCard from "./popupCard";
 import PopupForm from "./popupForm";
-
 import { fetchPinsData } from "@/lib/data";
-import './glassEffect.css';
+import "./glassEffect.css";
+import "./mapbox-directions.css";
+import mapboxgl from "mapbox-gl";
+import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions";
+import _ from "lodash";
+
+// Ensure the API key is stored securely
+const mapboxAccessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
+
+
 
 export default function MapComponent() {
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -48,9 +52,9 @@ export default function MapComponent() {
   };
 
   const [viewState, setViewState] = useState({
-    longitude: 0,
-    latitude: 0,
-    zoom: 0,
+    longitude: -86.4512,
+    latitude: 34.6568,
+    zoom: 7
   });
 
   const searchParams = useSearchParams();
@@ -76,11 +80,34 @@ export default function MapComponent() {
   }, [fetchPins, searchParams]);
 
   const geoControlRef = useRef<maplibregl.GeolocateControl | null>(null);
+  const mapRef = useRef<MapRef | null>(null);
+
+  type MapboxDirectionsInstance = InstanceType<typeof MapboxDirections>;
+  const directionsRef = useRef<MapboxDirectionsInstance | null>(null);
 
   useEffect(() => {
-    // make geolocate trigger on load
-    geoControlRef.current?.trigger();
-  }, []);
+    if (typeof window !== "undefined" && mapRef.current) {
+      const mapInstance = mapRef.current.getMap();
+
+      if (mapInstance) {
+        const directions = new MapboxDirections({
+          accessToken: mapboxAccessToken,
+          unit: "metric",
+          profile: "mapbox/driving"
+        });
+
+        directionsRef.current = directions;
+        mapInstance.addControl(directions, "bottom-right");
+
+        // Cleanup function to remove the control when the component is unmounted
+        return () => {
+          if (directionsRef.current) {
+            mapInstance.removeControl(directionsRef.current);
+          }
+        };
+      }
+    }
+  }, [mapRef.current]);
 
   return (
     <>
@@ -121,6 +148,7 @@ export default function MapComponent() {
           style={{ height: "100%", position: "absolute", top: 0, left: 0 }}
           mapStyle={mapStyle}
           onMove={(e) => setViewState(e.viewState)}
+          ref={mapRef}
         >
           <PopupForm
             latitude={viewState.latitude}
@@ -196,6 +224,10 @@ export default function MapComponent() {
             flex-direction: row;
             flex-wrap: wrap;
           }
+        }
+
+        .directions-control {
+          pointer-events: auto;
         }
       `}</style>
     </>

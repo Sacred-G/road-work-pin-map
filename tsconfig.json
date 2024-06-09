@@ -11,29 +11,26 @@
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@lib/*": [
-        "./lib/*"
-      ]
-    },
-    "typeRoots": [
-      "./@types"
-    ],
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./*"
+      ], // This is for aliases starting with @/ for files in your project root
+      "@lib/*": [
+        "lib/*"
+      ] // This fixes the mapping for @lib/ to the lib folder
+    },
+    "module": "esnext"
   },
   "include": [
     "next-env.d.ts",
