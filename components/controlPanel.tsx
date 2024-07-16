@@ -68,7 +68,7 @@ function ControlPanel(props: ControlPanelProps) {
 
   return (
     <Box
-      style={{ position: "absolute", top: "10px", right: "50px" }}
+      style={{ position: "absolute", bottom: "10px", left: "50px" }}
       w={180}
       h={100}
     >
