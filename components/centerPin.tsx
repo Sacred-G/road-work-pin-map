@@ -11,8 +11,8 @@ export default function CenterPin() {
         left: "50%",
         transform: "translate(-50%, -18px)",
       }}
-    >
-      <Pin size={20} />
+    > <Pin size={20} imageUrl="images\roadwork.png" />
+      
     </Box>
   );
 }

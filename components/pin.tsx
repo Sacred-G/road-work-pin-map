@@ -1,19 +1,19 @@
 import * as React from "react";
-
-const ICON = `M20.2,15.7L20.2,15.7c1.1-1.6,1.8-3.6,1.8-5.7c0-5.6-4.5-10-10-10S2,4.5,2,10c0,2,0.6,3.9,1.6,5.4c0,0.1,0.1,0.2,0.2,0.3
-  c0,0,0.1,0.1,0.1,0.2c0.2,0.3,0.4,0.6,0.7,0.9c2.6,3.1,7.4,7.6,7.4,7.6s4.8-4.5,7.4-7.5c0.2-0.3,0.5-0.6,0.7-0.9
-  C20.1,15.8,20.2,15.8,20.2,15.7z`;
-
+interface PinProps {
+  size: number;
+  imageUrl: string;
+  style?: React.CSSProperties;}
+  
 const pinStyle = {
-  fill: "#d00",
-  stroke: "none",
+  display: 'flex',
+  width: '50px',  // Ensure the image scales correctly
+  height: '50px', // Ensure the image scales correctly
+
 };
 
-function Pin({ size }: { size: number }) {
+function Pin({ size, imageUrl }: { size: number, imageUrl: string }) {
   return (
-    <svg height={size} viewBox="0 0 24 24" style={pinStyle}>
-      <path d={ICON} />
-    </svg>
+    <img src={imageUrl} alt="Pin" height={size} width={size} style={pinStyle} />
   );
 }
 

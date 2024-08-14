@@ -1,6 +1,4 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { IconChevronRight } from "@tabler/icons-react";
 import {
@@ -19,12 +17,55 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "@mantine/form";
+import '../styles/globals.css'; // Import global styles if necessary
+import { fetchCategories, fetchUsers, fetchPinsList } from "@/lib/data";
+import './navbar.css';
+import ControlPanel from "./controlPanel";
 
-import { fetchCategories } from "@/lib/data";
-import { fetchUsers } from "@/lib/data";
-import { fetchPinsList } from "@/lib/data";
+interface NavbarProps {
+  setRoute: (addressA: string, addressB: string) => void;
+  route?: string; // Assuming you want to pass a route prop optionally
+  longitude: number;
+  latitude: number;
+  handleShowCreateForm: () => void;
+  showCreateForm: boolean;
+}
 
-export default function Navbar() {
+const accessToken = 'pk.eyJ1Ijoic2JvdWxkaW4iLCJhIjoiY2x2ajMxdHUyMTkxMDJpcHUydzZxMzV4ZSJ9.lsPxcmST-IYlN7BgejSRhw'; // Replace with your Mapbox access token
+
+async function geocodeAddress(address: string): Promise<[number, number] | null> {
+  try {
+    const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${accessToken}`);
+    const data = await response.json();
+    if (data.features && data.features.length > 0) {
+      const [longitude, latitude] = data.features[0].center;
+      return [longitude, latitude];
+    }
+    return null;
+  } catch (error) {
+    console.error("Error geocoding address:", error);
+    return null;
+  }
+}
+
+async function fetchAddressSuggestions(query: string) {
+  if (!query) return [];
+  try {
+    const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${accessToken}`);
+    const data = await response.json();
+    if (data.features) {
+      return data.features.map((feature: any) => ({
+        value: feature.place_name,
+        coordinates: feature.center,
+      }));
+    }
+  } catch (error) {
+    console.error("Error fetching address suggestions:", error);
+  }
+  return [];
+}
+
+export default function Navbar({ setRoute, longitude, latitude, handleShowCreateForm, showCreateForm }: NavbarProps) {
   const { data: session, status } = useSession();
   const userName = session?.user?.name;
   const userIcon = session?.user?.image;
@@ -36,13 +77,17 @@ export default function Navbar() {
       category: searchParams.get("category") || "",
       user: searchParams.get("user") || "",
       pin_name: searchParams.get("pin_name") || "",
+      addressA: "",
+      addressB: "",
     },
   });
 
-  const [categories, setCategories] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [pinsList, setPinsList] = useState([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [users, setUsers] = useState<string[]>([]);
+  const [pinsList, setPinsList] = useState<string[]>([]);
   const [isHidden, setIsHidden] = useState(true);
+  const [addressSuggestionsA, setAddressSuggestionsA] = useState<any[]>([]);
+  const [addressSuggestionsB, setAddressSuggestionsB] = useState<any[]>([]);
   const smallDisplay = useMediaQuery("(max-width: 830px)");
 
   useEffect(() => {
@@ -78,10 +123,14 @@ export default function Navbar() {
     category,
     user,
     pin_name,
+    addressA,
+    addressB,
   }: {
     category: string;
     user: string;
     pin_name: string;
+    addressA: string;
+    addressB: string;
   }) => {
     const params = new URLSearchParams();
     if (category.length > 0) {
@@ -94,6 +143,25 @@ export default function Navbar() {
       params.set("pin_name", pin_name);
     }
     router.push("map?" + params.toString());
+
+    // Set route if both addresses are provided
+    if (addressA && addressB) {
+      setRoute(addressA, addressB);
+    }
+  };
+
+  const handleAddressAChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const query = event.currentTarget.value;
+    form.setFieldValue('addressA', query);
+    const suggestions = await fetchAddressSuggestions(query);
+    setAddressSuggestionsA(suggestions.map((s: { value: any; }) => s.value));
+  };
+
+  const handleAddressBChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const query = event.currentTarget.value;
+    form.setFieldValue('addressB', query);
+    const suggestions = await fetchAddressSuggestions(query);
+    setAddressSuggestionsB(suggestions.map((s: { value: any; }) => s.value));
   };
 
   return (
@@ -109,11 +177,11 @@ export default function Navbar() {
         style={{ zIndex: 4 }}
       ></Burger>
       <Flex
+        className="glass-effect"
         direction="column"
         py={10}
         w={220}
         h={"100vh"}
-        bg={"white"}
         justify={"space-between"}
         pos={"absolute"}
         style={{ zIndex: 3 }}
@@ -145,9 +213,15 @@ export default function Navbar() {
               maxDropdownHeight={200}
               {...form.getInputProps("user")}
             />
-            <Button type="submit">Apply filter</Button>
           </Stack>
         </form>
+
+        <ControlPanel
+          longitude={longitude}
+          latitude={latitude}
+          handleShowCreateForm={handleShowCreateForm}
+          showCreateForm={showCreateForm}
+        />
 
         <Stack gap={0}>
           <Divider />

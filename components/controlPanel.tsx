@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Stack, Button, Text, Box, LoadingOverlay } from "@mantine/core";
-import Link from "next/link";
 import { useSession } from "next-auth/react";
 
 function round5(value: number) {
@@ -53,24 +52,14 @@ function ControlPanel(props: ControlPanelProps) {
 
   if (status === "loading" || status === "unauthenticated") {
     return (
-      <Button
-        style={{ position: "absolute", top: "10px", right: "50px" }}
-        w={180}
-        component={Link}
-        href="/api/auth/signin"
-        color="grey"
-      >
+      <Button w={180} component="a" href="/api/auth/signin" color="grey">
         Sign in to pin location
       </Button>
     );
   }
 
   return (
-    <Box
-      style={{ position: "absolute", top: "10px", right: "50px" }}
-      w={180}
-      h={100}
-    >
+    <Box className="glass-effect" w={180} h={100}>
       <LoadingOverlay
         zIndex={1000}
         visible={true}

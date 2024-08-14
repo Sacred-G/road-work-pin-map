@@ -1,0 +1,23 @@
+{ "cssVariables.lookupFiles": [
+    "**/*.css",
+    "**/*.scss",
+    "**/*.sass",
+    "**/*.less",
+    "node_modules/@mantine/core/styles.css"]
+  ,
+    "cSpell.words": [
+        "Bgej",
+        "dataviz",
+        "geocode",
+        "Geolocate",
+        "mantine",
+        "mantinex",
+        "Mapbox",
+        "maplibre",
+        "maplibregl",
+        "Pxcm",
+        "signin",
+        "tabler",
+        "tailwindcss"
+    ]
+}

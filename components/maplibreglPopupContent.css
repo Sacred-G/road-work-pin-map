@@ -1,10 +1,19 @@
 .maplibregl-popup-content {
-  padding: 5px;
+  padding: 0;
   background: none;
   border: none;
   box-shadow: none;
-  width:100%;
-  height:auto;
-  fit:contain;
-  display:flex;
+  width: 50vw;
+  border-radius:3px;
+}
+.m_e615b15f mantine-Card-root m_1b7284a3 mantine-Paper-root{
+  width:50vw
+  
+}
+.marker {
+  z-index: 1; /* Adjust this value as needed */
+}
+
+.marker:hover {
+  z-index: 10; /* Higher value for hovered markers, if needed */
 }

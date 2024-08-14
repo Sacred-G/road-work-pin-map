@@ -1,0 +1,13 @@
+.glass-navbar {
+    z-index: 2;
+    justify-content: space-between;
+    flex-direction: column;
+    padding-inline: calc(0.625rem * var(--mantine-scale));
+    padding-block: calc(0.625rem * var(--mantine-scale));
+    width: calc(5rem * var(--mantine-scale));
+    height: 100vh;
+  
+    background-color: #3333338b;
+    color: white;
+}
+

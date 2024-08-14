@@ -1,0 +1,10 @@
+.glass-effect {
+
+    background: rgba(255, 255, 255, 0.316);
+    border-radius: 10px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 10px;
+   color:rgb(67, 66, 66)
+  }
+  

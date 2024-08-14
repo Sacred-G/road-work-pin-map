@@ -17,3 +17,20 @@ declare module "next-auth" {
     user: User;
   }
 }
+type Location = {
+  name: string;
+  description: string;
+};
+type SidebarProps = {
+  locations: Location[];
+  onTabHover: (index: number | null) => void;
+  onTabClick: (index: number) => void;
+};
+// In a shared types file or directly in mapComponent.tsx if applicable
+interface PinData {
+  id: string; // Ensure this matches the expected type
+  name: string;
+  description: string;
+  longitude: number;
+  latitude: number;
+}
