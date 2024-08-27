@@ -10,7 +10,7 @@ export default function Home() {
         width: "100%",
         height: "100vh",
         position: "absolute",
-        display: "inline-block",
+        display: "grid",
       }}
     >
       <Suspense fallback={<Skeleton height="100%" width="100%" />}>

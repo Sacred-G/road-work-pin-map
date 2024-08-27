@@ -1,13 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { useState, useEffect, useRef } from "react";
-import Map, { NavigationControl, GeolocateControl, Popup, MapRef } from "react-map-gl/maplibre";
+import { useState, useEffect, useRef, useCallback } from "react";
+import Map, { NavigationControl, GeolocateControl, Popup, MapRef, Source, Layer } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
 import "./maplibreglPopupContent.css";
 import { useSearchParams } from "next/navigation";
-import { LoadingOverlay } from "@mantine/core";
+import { LoadingOverlay, Button } from "@mantine/core";
 import ControlPanel from "./controlPanel";
 import MapMarkers from "./marker";
 import PopupCard from "./popupCard";
@@ -22,12 +22,11 @@ import _ from "lodash";
 // Ensure the API key is stored securely
 const mapboxAccessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
-
-
 export default function MapComponent() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [popupInfo, setPopupInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showTraffic, setShowTraffic] = useState(false);
 
   const mapStyles = {
     hybrid: "https://api.maptiler.com/maps/hybrid/style.json?key=z77nEry6rP70PZq17SYM",
@@ -50,6 +49,10 @@ export default function MapComponent() {
     const selectedStyle = event.target.value as MapStyleKey;
     setMapStyle(mapStyles[selectedStyle]);
   };
+
+  const toggleTraffic = useCallback(() => {
+    setShowTraffic(prev => !prev);
+  }, []);
 
   const [viewState, setViewState] = useState({
     longitude: -86.4512,
@@ -142,6 +145,9 @@ export default function MapComponent() {
               <option value="dataviz_dark">Dataviz Dark</option>
             </select>
           </div>
+          <Button onClick={toggleTraffic} style={{ marginLeft: '10px' }}>
+            {showTraffic ? 'Hide Traffic' : 'Show Traffic'}
+          </Button>
         </div>
         <Map
           initialViewState={viewState}
@@ -181,6 +187,32 @@ export default function MapComponent() {
             ref={geoControlRef}
           />
           <NavigationControl />
+
+          {showTraffic && (
+            <Source
+              id="traffic"
+              type="vector"
+              url="https://api.mapbox.com/v4/mapbox.mapbox-traffic-v1.json?access_token=pk.eyJ1IjoieWt1c3RhbGxkYXkiLCJhIjoiY2xqNms2ZTc0MDJtczNkcnlsNm9pcmI2cCJ9.G54VqM0ys7e1EE3jAaLGGw"
+            >
+              <Layer
+                id="traffic-layer"
+                type="line"
+                source="traffic"
+                source-layer="traffic"
+                paint={{
+                  "line-width": 2,
+                  "line-color": [
+                    "case",
+                    ["==", "low", ["get", "congestion"]], "#00FF00",
+                    ["==", "moderate", ["get", "congestion"]], "#FFFF00",
+                    ["==", "heavy", ["get", "congestion"]], "#FF0000",
+                    ["==", "severe", ["get", "congestion"]], "#800000",
+                    "#000000"
+                  ]
+                }}
+              />
+            </Source>
+          )}
         </Map>
         <ControlPanel
           longitude={viewState.longitude}
