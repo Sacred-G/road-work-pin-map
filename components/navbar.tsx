@@ -98,6 +98,9 @@ export default function Navbar({ toggleColorScheme }: NavbarProps) {
     if (values.pin_name) params.set("pin_name", values.pin_name);
     router.push("map?" + params.toString());
     setSearchParams(params); // Update the state
+    if (smallDisplay) {
+      setIsHidden(true); // Hide navbar on small screens after submission
+    }
   };
 
   // Function to create Google Maps link
@@ -118,11 +121,11 @@ export default function Navbar({ toggleColorScheme }: NavbarProps) {
         style={{ zIndex: 4 }}
       />
       <Flex
-        className="glass-effect"
+        className="glass-effect glass-navbar"
         direction="column"
         py={10}
-        w={220}
-        h={"100vh"}
+        w={smallDisplay ? "100%" : 220}
+        h={smallDisplay ? "auto" : "100vh"}
         justify={"space-between"}
         pos={"absolute"}
         style={{ zIndex: 3 }}
@@ -130,7 +133,7 @@ export default function Navbar({ toggleColorScheme }: NavbarProps) {
         display={smallDisplay ? (isHidden ? "none" : "flex") : "flex"}
       >
         <form onSubmit={form.onSubmit(handleSubmit)}>
-          <Stack gap={"md"} pt={30}>
+          <Stack gap={"md"} pt={smallDisplay ? 50 : 30}>
             <Autocomplete
               label="Search"
               placeholder="Search"
@@ -160,7 +163,7 @@ export default function Navbar({ toggleColorScheme }: NavbarProps) {
 
         <Divider my="sm" />
 
-        <ScrollArea h={300}>
+        <ScrollArea h={smallDisplay ? 200 : 300}>
           <Stack gap={"md"} pt={30}>
             <WeatherWidget />
           </Stack>
