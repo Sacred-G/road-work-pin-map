@@ -32,5 +32,4 @@ export interface PinData {
   name: string;
   description: string;
   longitude: number;
-  latitude: number;
-}
+  latitude: nu
