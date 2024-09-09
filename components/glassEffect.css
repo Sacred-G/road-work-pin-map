@@ -1,0 +1,43 @@
+/* glassEffect.css */
+.glass-effect
+ {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: white !important;
+  padding: 10px;
+}
+
+/* Style for the accordion */
+ .mantine-Accordion-item {
+  background: transparent !important;
+  border: none !important;
+}
+
+.mantine-Accordion-control {
+  background: transparent !important;
+  color: white !important;
+}
+
+.mantine-Accordion-content {
+  background: transparent !important;
+  color: white !important;
+}
+
+/* Style for links */
+.jsx-345ca7ef042b28ef a {
+  color: lightblue !important;
+}
+
+.m_c0783ff9 {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: white !important;
+}

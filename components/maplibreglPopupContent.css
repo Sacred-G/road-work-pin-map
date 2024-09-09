@@ -1,19 +1,75 @@
+/* Styling for the map popup content */
 .maplibregl-popup-content {
   padding: 0;
-  background: none;
+  background: none !important;
+  background-color: none !important;
   border: none;
   box-shadow: none;
-  width: 50vw;
+  max-width: 40vw;
   border-radius:3px;
-}
-.m_e615b15f mantine-Card-root m_1b7284a3 mantine-Paper-root{
-  width:50vw
+  width:35vw;
+  z-index: 1;
+  height: 100%;
   
 }
+
+/* Styling for map marker popups */
+.m_e615b15f mantine-Card-root m_1b7284a3 mantine-Paper-root{
+  width:50vw
+
+}
+
+/* Styling for map markers */
 .marker {
   z-index: 1; /* Adjust this value as needed */
 }
 
+/* Styling for hovered map markers */
 .marker:hover {
   z-index: 10; /* Higher value for hovered markers, if needed */
 }
+
+/* General map styling */
+
+
+.maplibregl-popup{
+  z-index:1;
+  max-width:40vw;
+  height: auto;
+}
+.m_9e117634 {
+  display: block;
+  flex: 0 1;
+  object-fit: var(--image-object-fit, cover);
+  width: 100%;
+  border-radius: var(--image-radius, 0);
+  height: auto;}
+
+  .popup-container {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: all 0.3s ease-out;
+  }
+  
+  .popup-container.animate {
+    bottom: 60px;
+    opacity: 1;
+  }
+  .jsx-3f2767226eec9292 glass-effect{
+    position: absolute;
+  z-index: 1;
+  top: 10px;
+  left: 40%;
+  transform: translateX(-50%);
+  padding: 5px 10px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 25%;
+
+
+  }

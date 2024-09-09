@@ -4,13 +4,19 @@ import { unstable_noStore as noStore } from "next/cache";
 export async function fetchPinDataById(id: number) {
   noStore();
   try {
-    const data = await sql`SELECT * FROM pins WHERE id = ${id}`;
-    return data.rows[0];
+    const pinData = await sql`SELECT * FROM pins WHERE id = ${id}`;
+    const pin = pinData.rows[0];
+    if (pin) {
+      const userData = await fetchUserByPinId(id);
+      return { ...pin, userEmail: userData?.email };
+    }
+    return null;
   } catch (error) {
     console.error("Failed to fetch pin:", error);
     return null;
   }
 }
+
 
 export async function findUserByEmail(email: string) {
   noStore();
@@ -22,7 +28,16 @@ export async function findUserByEmail(email: string) {
     return null;
   }
 }
-
+export async function findUserByCredentials(credentials: any) {
+  noStore();
+  try {
+    const data = await sql`SELECT * FROM users WHERE email = ${credentials.email} AND password = ${credentials.password}`;
+    return data.rows[0];
+  } catch (error) {
+    console.error("Failed to find user:", error);
+    return null;
+  }
+}
 export async function fetchPinsData(
   category: string | null,
   user: string | null,
@@ -68,19 +83,22 @@ export async function fetchUsers() {
   try {
     const res = await fetch(`/api/user`, { cache: "no-store" });
     const data = await res.json();
-    const users = data.map((user: { name: string }) => {
-      return user.name;
-    });
-    return users;
+    return data.map((user: { id: string; email: string; name: string; image: string }) => ({
+      id: user.id,
+      email: user.email || 'No email',
+      name: user.name || 'Unknown',
+      image: user.image || ''
+    }));
   } catch (error) {
     console.error("Failed to fetch users", error);
+    return [];
   }
 }
-
 export async function fetchPinsList(
   category: string | null,
   user: string | null,
   pin_name: string | null
+
 ) {
   noStore();
   try {
@@ -103,5 +121,20 @@ export async function fetchPinsList(
     return pinsList;
   } catch (error) {
     console.error("Failed to fetch pins:", error);
+  }
+}
+export async function fetchUserByPinId(pinId: number) {
+  noStore();
+  try {
+    const data = await sql`
+      SELECT users.* 
+      FROM users 
+      JOIN pins ON users.id = pins.user_id 
+      WHERE pins.id = ${pinId}
+    `;
+    return data.rows[0];
+  } catch (error) {
+    console.error("Failed to fetch user by pin:", error);
+    return null;
   }
 }

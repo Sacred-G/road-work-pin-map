@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const user = req.user || "";
     const pin_name = req.pin_name || "";
     const data = await sql`
-    SELECT pins.*, users.name 
+    SELECT pins.*, users.name, users.email 
     FROM pins 
     INNER JOIN users ON pins.user_id = users.id 
     WHERE LOWER(category) LIKE LOWER(${"%" + category + "%"})

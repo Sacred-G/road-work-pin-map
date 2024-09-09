@@ -1,19 +1,17 @@
 import * as React from "react";
-interface PinProps {
-  size: number;
-  imageUrl: string;
-  style?: React.CSSProperties;}
-  
-const pinStyle = {
-  display: 'flex',
-  width: '50px',  // Ensure the image scales correctly
-  height: '50px', // Ensure the image scales correctly
+import Image from 'next/image';
+import roadWorkIcon from '../images/road_work_icon.png'; // Adjust the path as needed
 
-};
-
-function Pin({ size, imageUrl }: { size: number, imageUrl: string }) {
+function Pin({ size }: { size: number }) {
   return (
-    <img src={imageUrl} alt="Pin" height={size} width={size} style={pinStyle} />
+    <div style={{ width: size, height: size, position: 'relative' }}>
+      <Image
+        src={roadWorkIcon}
+        alt="Road Work Icon"
+        layout="fill"
+        objectFit="contain"
+      />
+    </div>
   );
 }
 

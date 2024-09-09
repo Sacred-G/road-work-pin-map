@@ -1,8 +1,8 @@
 export function formatDateTime(dateString: string): string {
   const date = new Date(dateString);
 
-  // Example format: '27/12/2023, 16:31'
-  const formattedDate = date.toLocaleDateString("en-US", {
+  // Example format: '12/27/2023, 16:31'
+  const formatDateTime = date.toLocaleString("en-US", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -11,5 +11,5 @@ export function formatDateTime(dateString: string): string {
     hour12: false, // Change to true if you want 12-hour format
   });
 
-  return formattedDate;
+  return formatDateTime;
 }

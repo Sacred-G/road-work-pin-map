@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import PopupCardEdit from "./popupCardEdit";
 import { Group, Button } from "@mantine/core";
 import { useState } from "react";
-
+import './PopupCard.css'
 export default function PopupCard({
   popupInfo,
   fetchPins,

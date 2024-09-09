@@ -27,7 +27,7 @@ type SidebarProps = {
   onTabClick: (index: number) => void;
 };
 // In a shared types file or directly in mapComponent.tsx if applicable
-interface PinData {
+export interface PinData {
   id: string; // Ensure this matches the expected type
   name: string;
   description: string;

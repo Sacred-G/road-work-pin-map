@@ -15,7 +15,6 @@ import { useForm } from "@mantine/form";
 import PopupCardDisplay from "./popupCardDisplay";
 import { useDisclosure } from "@mantine/hooks";
 
-// Defining and exporting a functional component named PopupCardEdit
 export default function PopupCardEdit({
   pinData,
   fetchPins,
@@ -27,11 +26,9 @@ export default function PopupCardEdit({
   setIsEditing: (isEditing: boolean) => void;
   setPopupInfo: (info: any) => void;
 }) {
-  // Initializing state variables using useState hook
   const [visible, setVisible] = useDisclosure(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Initializing form state with initial values using useForm hook
   const form = useForm({
     initialValues: {
       pin_id: pinData.id,
@@ -43,36 +40,33 @@ export default function PopupCardEdit({
     },
   });
 
-  // Async function to handle form submission
   const handleSubmit = async (formValues: any) => {
-    setVisible.open(); // Show loading overlay
+    setVisible.open();;
     try {
-      const res = await editPin(formValues); // Call editPin function
-      setIsEditing(false); // Set isEditing state to false
-      fetchPins(); // Fetch updated pin data
-      setPopupInfo(res); // Set popup info with response data
-      form.reset(); // Reset form values
+      const res = await editPin(formValues);
+      setIsEditing(false);
+      fetchPins();
+      setPopupInfo(res);
+      form.reset();
     } catch (error) {
       console.error(error);
-      setError("Failed to edit the pin. Please try again."); // Set error message
+      setError("Failed to edit the pin. Please try again.");
     } finally {
-      setVisible.close(); // Hide loading overlay
+      setVisible.close();
     }
   };
 
-  // Rendering form with input fields, buttons, and error message
   return (
     <>
       <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
         <Card>
           <LoadingOverlay
-            visible={visible} // Set loading overlay visibility
+            visible={visible}
             zIndex={1000}
             overlayProps={{ radius: "sm", blur: 2 }}
           />
-          {error && <div style={{ color: 'red', marginBottom: 10 }}>{error}</div>} {/* Render error message if exists */}
+          {error && <div style={{ color: 'red', marginBottom: 10 }}>{error}</div>}
           <Stack gap={10}>
-            {/* Input fields for pin details */}
             <TextInput
               label="Image URL"
               placeholder="https://example.com/image.jpg"
@@ -98,7 +92,6 @@ export default function PopupCardEdit({
               {...form.getInputProps("category")}
             />
             <Flex direction="row" gap={10}>
-              {/* Checkbox for pin activity status */}
               <Checkbox
                 label="Active"
                 checked={form.values.is_active}
@@ -106,12 +99,11 @@ export default function PopupCardEdit({
               ></Checkbox>
             </Flex>
             <Flex direction="row" gap={10}>
-              {/* Submit and cancel buttons */}
               <Button type="submit">Submit</Button>
               <Button
                 type="reset"
                 onClick={() => {
-                  setIsEditing(false); // Set isEditing state to false on cancel
+                  setIsEditing(false);
                 }}
               >
                 Cancel

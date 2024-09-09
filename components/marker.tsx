@@ -1,61 +1,57 @@
-"use client";
-
+import React, { useMemo } from "react";
 import { Marker } from "react-map-gl";
 import Pin from "./pin";
-import { useMemo } from "react";
-import "./maplibreglPopupContent.css";
+import { PinData } from "../types";
 
 
-interface PinData {
-  id: number; // Add this line
-  name: string;
-  description: string;
-  longitude: number;
-  latitude: number;
-}
+
 interface MapMarkersProps {
-  setPopupInfo: (info: any) => void;
+  setPopupInfo: (pin: PinData | null) => void;
   pinsData: PinData[];
-  onMarkerHover: (index: any) => void;
-  hoveredTab: any; // Add this line
-  selectedMarker?: any; // Make it optional if it's not always required
-  hoveredPin?: number | null; // Added this line
+  onMarkerHover?: OnMarkerHoverCallback;
 }
+
+
+type OnMarkerHoverCallback = (pin: PinData | null) => void;
+
+interface MapMarkersProps {
+  setPopupInfo: (pin: PinData | null) => void;
+  pinsData: PinData[];
+  onMarkerHover?: OnMarkerHoverCallback;
+}
+
 export default function MapMarkers({
   setPopupInfo,
   pinsData,
-  onMarkerHover,
-  hoveredPin,
+  onMarkerHover
 }: MapMarkersProps) {
-  const imageUrl = "https://i.ibb.co/z8dwbcQ/working-clipart-work-order-17.png";
+  const pins = useMemo(
+    () => (
+      <>
+        {pinsData.map((pin) => (
+          <div
+            key={pin.id}
+            onMouseEnter={() => onMarkerHover?.(pin)}
+            onMouseLeave={() => onMarkerHover?.(null)}
+            style={{ position: 'absolute', transform: 'translate(-50%, -50%)' }}
+          >
+            <Marker
+              longitude={pin.longitude}
+              latitude={pin.latitude}
+              anchor="bottom"
+              onClick={(e) => {
+                e.originalEvent.stopPropagation();
+                setPopupInfo(pin);
+              }}
+            >
+              <Pin size={30} />
+            </Marker>
+          </div>
+        ))}
+      </>
+    ),
+    [pinsData, setPopupInfo, onMarkerHover]
+  );
 
-  const pins = useMemo(() => pinsData.map((city, index) => (
-    <div
-      key={city.id}
-      onMouseEnter={() => onMarkerHover(index)}
-      onMouseLeave={() => onMarkerHover(null)}
-    >
-      <Marker
-        longitude={city.longitude}
-        latitude={city.latitude}
-        anchor="bottom"
-        onClick={(e) => {
-          e.originalEvent.stopPropagation();
-          setPopupInfo(city);
-        }}
-      >
-        <Pin
-          size={20}
-          imageUrl={imageUrl}
-          style={{
-            transform: `scale(${hoveredPin === index ? 1.5 : 1})`,
-            transition: 'transform 0.3s ease-in-out',
-          }}
-        />
-      </Marker>
-    </div>
-  )),[]);
-
-  // Ensure the component returns the pins JSX
-  return pins;
+  return <>{pins}</>;
 }

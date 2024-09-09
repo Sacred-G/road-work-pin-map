@@ -12,10 +12,13 @@ import {
   LoadingOverlay,
   HoverCard,
   Box,
+  FileInput,
+  Notification,
 } from "@mantine/core";
 import { createPin } from "../lib/actions";
 import { useState, useEffect } from "react";
 import { useDisclosure } from "@mantine/hooks";
+import { IconX } from '@tabler/icons-react';
 
 import CenterPin from "./centerPin";
 
@@ -37,11 +40,13 @@ export default function PopupForm({
   const { data: session, status } = useSession();
 
   const [categories, setCategories] = useState([]);
+  const [error, setError] = useState<string | null>(null);
 
   const [visible, { toggle }] = useDisclosure(false);
 
   const form = useForm({
     initialValues: {
+      image_file: null,
       image_url: "",
       pin_name: "",
       category: "",
@@ -52,18 +57,43 @@ export default function PopupForm({
 
   const handleSubmit = async (formValues: any) => {
     toggle();
-    formValues.latitude = latitude;
-    formValues.longitude = longitude;
-    formValues.user_id = session?.user?.id;
+    setError(null);
+    const formData = new FormData();
+    formData.append('latitude', latitude.toString());
+    formData.append('longitude', longitude.toString());
+
+    console.log('Session user:', session?.user);
+    console.log('Session user ID:', session?.user?.id);
+
+    if (!session?.user?.id) {
+      setError('User ID is missing. Please try logging out and logging in again.');
+      toggle();
+      return;
+    }
+
+    formData.append('user_id', session.user.id.toString());
+
+    for (const key in formValues) {
+      if (key === 'image_file' && formValues[key]) {
+        formData.append(key, formValues[key]);
+      } else if (key === 'is_active') {
+        formData.append(key, formValues[key].toString());
+      } else {
+        formData.append(key, formValues[key]);
+      }
+    }
+
     try {
-      const res = await createPin(formValues);
+      const res = await createPin(formData);
       form.reset();
       setShowCreateForm(false);
       setPopupInfo(res);
       fetchPins();
-      toggle();
     } catch (error) {
-      console.error(error);
+      console.error('Error creating pin:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred while creating the pin');
+    } finally {
+      toggle();
     }
   };
 
@@ -106,12 +136,22 @@ export default function PopupForm({
           />
           <Card>
             <Stack gap={10}>
+              {error && (
+                <Notification icon={<IconX size="1.1rem" />} color="red" onClose={() => setError(null)}>
+                  {error}
+                </Notification>
+              )}
+              <FileInput
+                label="Upload Image"
+                accept="image/*"
+                placeholder="Choose image"
+                {...form.getInputProps('image_file')}
+              />
               <HoverCard width={300} shadow="md" position="top">
                 <HoverCard.Target>
                   <TextInput
-                    label="Image URL"
+                    label="Image URL (optional)"
                     placeholder="https://example.com/image.jpg"
-                    required
                     {...form.getInputProps("image_url")}
                   />
                 </HoverCard.Target>
@@ -140,6 +180,12 @@ export default function PopupForm({
                 placeholder="Description"
                 required
                 {...form.getInputProps("description")}
+              />
+              <TextInput
+                label="Location"
+                placeholder="Location ="
+                required
+                {...form.getInputProps("location")}
               />
               <Autocomplete
                 label="Select Category"
