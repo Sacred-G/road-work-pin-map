@@ -463,7 +463,11 @@ export default function MapComponent() {
     zIndex: 1,
     top: "50%",
     left: "50%",
+<<<<<<< HEAD
     transform: menuVisible ? "translate(-50%, -150%) translate(-50%, -50%)" : "translate(-50%, -260%) translate(-50%, -50%)",
+=======
+    transform: "translate(-50%, -50%)",
+>>>>>>> 594ac06de3002b205c7d346c07b87c8c9a6f15a9
     padding: "10px",
     boxShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
     display: "flex",
@@ -472,7 +476,11 @@ export default function MapComponent() {
     maxWidth: "300px",
     width: "90%",
     transition: "transform 0.3s ease-in-out",
+<<<<<<< HEAD
    
+=======
+    transform: menuVisible ? "translate(-50%, -150%)" : "translate(-50%, -260%)",
+>>>>>>> 594ac06de3002b205c7d346c07b87c8c9a6f15a9
   }}
 >
           <Select
