@@ -7,7 +7,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
 import { fetchUserByPinId } from '../lib/data'; // Adjust the import path as needed
 import { useSearchParams } from "next/navigation";
-import { LoadingOverlay, Autocomplete, Button, Switch } from "@mantine/core";
+import { LoadingOverlay, Autocomplete, Button, Switch, Select } from "@mantine/core";
 import ControlPanel from "./controlPanel";
 import MapMarkers from "./marker";
 import PopupCard from "./popupCard";
@@ -15,6 +15,7 @@ import PopupForm from "./popupForm";
 import { fetchPinsData } from "../lib/data";
 import "./glassEffect.css";
 import "./mapbox-directions.css";
+
 import mapboxgl from "mapbox-gl";
 import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions";
 import _, { identity } from "lodash";
@@ -24,7 +25,7 @@ import { PinData } from "../types";
 import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
 import { findUserByEmail, fetchUsers } from '.././lib/data';
 import { getSession } from "next-auth/react";
-
+import { Burger } from '@mantine/core';
 const mapboxAccessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 const googleMapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -73,7 +74,7 @@ const StreetView: React.FC<{ position: { lat: number; lng: number }; onClose: ()
   }, [position]);
 
   return (
-    <div style={{ position: 'absolute', bottom: 0, right: 0, width: '400px', height: '30%' }}>
+    <div style={{ position: 'absolute', bottom: 0, right: 0, width: '100%', height: '30%', maxWidth: '400px' }}>
       <div ref={streetViewRef} style={{ width: '100%', height: '100%' }} />
       <button onClick={onClose} style={{
         position: 'absolute', top: '10px', right: '10px', zIndex: 1,
@@ -114,6 +115,7 @@ export default function MapComponent() {
   const [hoveredPin, setHoveredPin] = useState<PinData | null>(null);
   const [userLocationFound, setUserLocationFound] = useState(false);
   const [userProfileImage, setUserProfileImage] = useState<string | null>(null);
+  const [menuVisible, setMenuVisible] = useState(false);
 
   const handleMarkerHover = useCallback((pin: PinData | null) => {
     setHoveredPin(pin);
@@ -206,8 +208,7 @@ export default function MapComponent() {
     setShowCreateForm(!showCreateForm);
   };
 
-  const handleMapStyleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedStyle = event.target.value as MapStyleKey;
+  const handleMapStyleChange = (selectedStyle: MapStyleKey) => {
     setMapStyle(mapStyles[selectedStyle]);
   };
 
@@ -290,7 +291,9 @@ export default function MapComponent() {
       console.error('Invalid longitude or latitude:', pin?.longitude, pin?.latitude);
     }
   };
-  
+  const toggleMenu = () => {
+    setMenuVisible(prev => !prev);
+  };
   const handleMapClick = (event: { lngLat: { lat: number; lng: number } }) => {
     const { lngLat } = event;
     if (streetViewEnabled) {
@@ -443,6 +446,7 @@ export default function MapComponent() {
 
   if (!isLoaded) return <div>Loading...</div>;
 
+  
   return (
     <>
       <LoadingOverlay
@@ -451,75 +455,79 @@ export default function MapComponent() {
         overlayProps={{ radius: "sm", blur: 2 }}
       />
       
-            <div style={{ position: "relative", height: "100%" }}> 
-        <div
-          className="glass-effect"
-          style={{
-            position: "absolute",
-            zIndex: 1,
-            top: 10,
-            left: "40%",
-            transform: "translateX(-50%)",
-            padding: "5px 10px",
-            boxShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <div id="mapStyleContainer">   
-            <label htmlFor="mapStyleSelect" style={{ marginRight: "8px" }}>
-              Map Style:    
-            </label>
-            <select id="mapStyleSelect" onChange={handleMapStyleChange}>
-              <option value="hybrid">Hybrid</option>
-              <option value="streets">Streets</option>
-              <option value="satellite">Satellite</option>
-              <option value="terrain">Terrain</option>
-              <option value="streets_dark">Streets Dark</option>
-              <option value="dataviz_dark">Dataviz Dark</option>
-            </select>
-          </div>
-          <form onSubmit={handleAddressSubmit} style={{ display: "flex", marginTop: "10px" }}>
+      <div style={{ position: "relative", height: "100%" }}> 
+      <div
+  className={`glass-effect control-panel ${menuVisible ? 'visible' : ''}`}
+  style={{
+    position: "fixed",
+    zIndex: 1,
+    top: "50%",
+    left: "50%",
+    transform: menuVisible ? "translate(-50%, -150%) translate(-50%, -50%)" : "translate(-50%, -260%) translate(-50%, -50%)",
+    padding: "10px",
+    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    maxWidth: "300px",
+    width: "90%",
+    transition: "transform 0.3s ease-in-out",
+   
+  }}
+>
+          <Select
+            label="Map Style"
+            placeholder="Choose a style"
+            data={[
+              { value: 'hybrid', label: 'Hybrid' },
+              { value: 'streets', label: 'Streets' },
+              { value: 'satellite', label: 'Satellite' },
+              { value: 'terrain', label: 'Terrain' },
+              { value: 'streets_dark', label: 'Streets Dark' },
+              { value: 'dataviz_dark', label: 'Dataviz Dark' },
+            ]}
+            onChange={(value) => handleMapStyleChange(value as MapStyleKey)}
+            style={{ marginBottom: "10px", width: "100%" }}
+          />
+          <form onSubmit={handleAddressSubmit} style={{ display: "flex", flexDirection: "column", width: "100%" }}>
             <Autocomplete
               placeholder="Enter address"  
               value={address}
               onChange={handleAddressChange}    
               data={addressSuggestions.map(suggestion => suggestion.value)}
-              style={{ marginRight: "10px", width: "300px" }}
+              style={{ marginBottom: "10px", width: "100%" }}
             />
-            <Button type="submit">Go to Location</Button>
+            <Button type="submit" style={{ marginBottom: "10px", width: "100%" }}>Go to Location</Button>
           </form>
-          <Button onClick={handleShowUserLocations} style={{ marginTop: "10px" }}>
-  {showUserLocations ? "Hide User Locations" : "Show User Locations"}
-</Button>
+          <Button onClick={handleShowUserLocations} style={{ marginBottom: "10px", width: "100%" }}>
+            {showUserLocations ? "Hide User Locations" : "Show User Locations"}
+          </Button>
 
           <div className="switches-container">
             <Switch
               checked={navigationEnabled}
               onChange={(event) => setNavigationEnabled(event.currentTarget.checked)}
-              label="Enable Navigation"
+              label="Navigation"
             />
             <Switch
               checked={streetViewEnabled}
               onChange={(event) => setStreetViewEnabled(event.currentTarget.checked)}
-              label="Enable Street View"
+              label="Street View"
             />
             <Switch
               checked={directionsEnabled}
               onChange={(event) => setDirectionsEnabled(event.currentTarget.checked)}
-              label="Enable Directions"
+              label="Directions"
             />
             <Switch
               checked={showTraffic}
               onChange={(event) => setShowTraffic(event.currentTarget.checked)}
-              label="Show Traffic"
+              label="Traffic"
             />
           </div>
         </div>
         <div style={{ position: "relative", height: "100%" }}>
           <Map
-      
             {...viewState}
             onMove={evt => setViewState({...evt.viewState})}
             style={{ width: "100%", height: "100%" }}
@@ -555,74 +563,74 @@ export default function MapComponent() {
                 />
               </Popup>
             )}
- {showUserLocations && userLocations.map((location) => (
-  <Marker
-    key={location.id}
-    longitude={location.longitude}
-    latitude={location.latitude}
-    anchor="center"
-  >
-    <div
-      onMouseEnter={() => handleUserMarkerHover(location)}
-      onMouseLeave={handleUserMarkerLeave}
-      style={{
-        width: 40,
-        height: 40,
-        borderRadius: '50%',
-        overflow: 'hidden',
-        border: location.id === 'currentUser' ? '3px solid #00FF00' : '2px solid white',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
-        cursor: 'pointer',
-      }}
-    >
-      <img 
-        src={location.image}
-        alt={location.name}
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-        }}
-        onError={(e) => {
-          e.currentTarget.src = 'images/default-avatar.png';
-        }}
-      />
-    </div>
-  </Marker>
-))}
-{hoveredUser && (
-  <Popup
-    anchor="top"
-    longitude={hoveredUser.longitude}
-    latitude={hoveredUser.latitude}
-    closeButton={false}
-    closeOnClick={false}
-    offset={[0, -20] as [number, number]}
-  >
-    <div className="user-popup">
-      <img 
-        src={hoveredUser.image}
-        alt={hoveredUser.name} 
-        style={{
-          width: 60, 
-          height: 60, 
-          borderRadius: '50%', 
-          marginBottom: 10,
-          border: '2px solid white',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-        }} 
-        onError={(e) => {
-          e.currentTarget.src = 'images/default-avatar.png';
-        }}
-      />
-      <h3>{hoveredUser.name}</h3>
-      <p>Email: {hoveredUser.email}</p>
-      <p>Role: {hoveredUser.role}</p>
-      <p>Last Active: {new Date(hoveredUser.lastActive).toLocaleString()}</p>
-      <p>Status: {hoveredUser.status}</p>
-    </div>
-  </Popup>
-)}
+            {showUserLocations && userLocations.map((location) => (
+              <Marker
+                key={location.id}
+                longitude={location.longitude}
+                latitude={location.latitude}
+                anchor="center"
+              >
+                <div
+                  onMouseEnter={() => handleUserMarkerHover(location)}
+                  onMouseLeave={handleUserMarkerLeave}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    overflow: 'hidden',
+                    border: location.id === 'currentUser' ? '3px solid #00FF00' : '2px solid white',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <img 
+                    src={location.image}
+                    alt={location.name}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                    onError={(e) => {
+                      e.currentTarget.src = 'images/default-avatar.png';
+                    }}
+                  />
+                </div>
+              </Marker>
+            ))}
+            {hoveredUser && (
+              <Popup
+                anchor="top"
+                longitude={hoveredUser.longitude}
+                latitude={hoveredUser.latitude}
+                closeButton={false}
+                closeOnClick={false}
+                offset={[0, -20] as [number, number]}
+              >
+                <div className="user-popup">
+                  <img 
+                    src={hoveredUser.image}
+                    alt={hoveredUser.name} 
+                    style={{
+                      width: 60, 
+                      height: 60, 
+                      borderRadius: '50%', 
+                      marginBottom: 10,
+                      border: '2px solid white',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                    }} 
+                    onError={(e) => {
+                      e.currentTarget.src = 'images/default-avatar.png';
+                    }}
+                  />
+                  <h3>{hoveredUser.name}</h3>
+                  <p>Email: {hoveredUser.email}</p>
+                  <p>Role: {hoveredUser.role}</p>
+                  <p>Last Active: {new Date(hoveredUser.lastActive).toLocaleString()}</p>
+                  <p>Status: {hoveredUser.status}</p>
+                </div>
+              </Popup>
+            )}
 
             <GeolocateControl
               positionOptions={{ enableHighAccuracy: true }}
@@ -679,6 +687,21 @@ export default function MapComponent() {
           handleShowCreateForm={handleShowCreateForm}
           showCreateForm={showCreateForm}
         />
+        <Burger
+opened={menuVisible}
+onClick={toggleMenu}
+size="sm"
+  className="menu-button"
+styles={{
+  root: {
+    position: 'fixed',
+    top: '7%',
+    left: '-3%',
+    transform: "translate(-50%, -150%)",
+    zIndex: 3,
+  },
+}}
+/>
         {showStreetView && isLoaded && (
           <StreetView
             position={streetViewPosition}
@@ -688,35 +711,16 @@ export default function MapComponent() {
         
       </div>
       <style jsx>{`
-        #mapStyleContainer {
-          display: none;
-        }
-        @media (min-width: 600px) {
-          #mapStyleContainer {
-            display: inline-block;
-          }
-        }
-        @media (max-width: 600px) {
-          #mapStyleContainer {
-            position: absolute !important;
-            bottom: 20px !important;
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            display: block !important;
-            background: rgba(255, 255, 255, 0.8) !important;
-            padding: 5px 10px !important;
-            border-radius: 4px !important;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
-          }
-        }
         .control-panel {
           display: flex;
           flex-direction: column;
         }
         @media (max-width: 600px) {
           .control-panel {
-            flex-direction: row;
-            flex-wrap: wrap;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: none;
           }
         }
         .directions-control {
@@ -741,28 +745,41 @@ export default function MapComponent() {
         .switches-container {
           display: flex;
           flex-wrap: wrap;
-          justify-content: center;
+          justify-content: space-between;
           gap: 10px;
-          margin-top: 10px;
+          margin-top: 20px;
+          width: 100%;
         }
         .switches-container .mantine-Switch-root {
           margin: 0;
+          width: calc(50% - 5px);
         }
+        @media (max-width: 400px) {
+          .switches-container .mantine-Switch-root {
+            width: 100%;
+          }
+        }
+          .control-panel {
+  transition: transform 0.3s ease-in-out;
+}
 
-          .user-popup {
-   
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
+.menu-button {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .control-panel {
+    transform: translateX(-100%);
   }
-  .user-popup h3 {
-    margin: 5px 0;
+
+  .control-panel.visible {
+    transform: translateX(0);
   }
-  .user-popup p {
-    margin: 5px 0;
-    font-size: 14px;
+
+  .menu-button {
+    display: flex;
   }
+}
       `}</style>
     </>
   );

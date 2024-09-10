@@ -74,3 +74,42 @@
 color:blue
 }
 
+.menu-button::after {
+  content: 'Menu';
+  position: absolute;
+  top: 1%;
+  left: 200px;
+  transform: translateX(-50%);
+  font-size: 12px;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin-top: 5px;
+}
+.jsx-c6336379f4514d3e glass-effect control-panel visible{
+position: absolute;
+  z-index: 1;
+  top: 10px;
+  left: 100px;
+  padding: 10px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 300px;
+  width: 90%;
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(0px);
+}
+
+.mantine-focus-auto menu-button m_fea6bf1a mantine-Burger-root m_87cf2631 mantine-UnstyledButton-root{
+
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  --burger-size: var(--burger-size-sm);
+
+
+}

@@ -1,7 +1,7 @@
 /* glassEffect.css */
 .glass-effect
  {
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(6, 90, 155, 0.434) !important;
   backdrop-filter: blur(10px) !important;
   -webkit-backdrop-filter: blur(10px) !important;
   border-radius: 10px !important;

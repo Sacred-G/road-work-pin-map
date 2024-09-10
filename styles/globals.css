@@ -76,3 +76,33 @@ body, html, #__next {
 .maplibregl-style-light .maplibregl-ctrl {
   color: black;
 }
+
+/* Responsive styles */
+@media (max-width: 830px) {
+  .glass-navbar {
+    width: 100%;
+    height: auto;
+    border-radius: 0;
+  }
+
+  .map-container {
+    height: calc(100vh - 60px);
+  }
+
+  .map-overlay {
+    width: 90%;
+    max-width: 400px;
+  }
+
+  .pin-form {
+    width: 90%;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .map-overlay,
+  .pin-form {
+    width: 95%;
+  }
+}
