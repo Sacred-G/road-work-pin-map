@@ -64,11 +64,11 @@ const StreetView: React.FC<{ position: { lat: number; lng: number }; onClose: ()
         position: position,
         pov: { heading: 0, pitch: 0 },
         zoom: 1,
-        addressControl: false,
+        addressControl: true,
         fullscreenControl: false,
         motionTracking: false,
         motionTrackingControl: false,
-        showRoadLabels: false,
+        showRoadLabels: true,
       });
     }
   }, [position]);
