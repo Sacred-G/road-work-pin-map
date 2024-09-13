@@ -9,13 +9,14 @@
   border-radius:3px;
   width:35vw;
   z-index: 1;
-  height: 100%;
+  height:35vh
   
 }
 
 /* Styling for map marker popups */
 .m_e615b15f mantine-Card-root m_1b7284a3 mantine-Paper-root{
   width:50vw
+height:35vh
 
 }
 
@@ -35,7 +36,7 @@
 .maplibregl-popup{
   z-index:1;
   max-width:40vw;
-  height: auto;
+  
 }
 .m_9e117634 {
   display: block;
