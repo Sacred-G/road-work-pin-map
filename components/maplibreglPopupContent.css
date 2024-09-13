@@ -7,9 +7,9 @@
   box-shadow: none;
   max-width: 40vw;
   border-radius:3px;
-  width:35vw;
+  
   z-index: 1;
-  height:35vh
+  height:100%
   
 }
 
@@ -36,6 +36,7 @@ height:35vh
 .maplibregl-popup{
   z-index:1;
   max-width:40vw;
+  height:100%
   
 }
 .m_9e117634 {
@@ -86,7 +87,7 @@ height:35vh
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 300px;
+    max-width: 500px;
     width: 90%;
     transition: transform 0.3s ease-in-out;
     -webkit-transform: translate(-50%, -210%);
@@ -106,7 +107,7 @@ height:35vh
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 300px;
+  max-width: 500px;
   width: 90%;
   transition: transform 0.3s ease-in-out;
   -webkit-transform: translate(-50%, -150%);
@@ -127,7 +128,7 @@ height:35vh
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 300px;
+  max-width: 500px;
   width: 90%;
   transition: transform 0.3s ease-in-out;
 
