@@ -1,4 +1,4 @@
-"use client";
+I"use client";
 
 import * as React from "react";
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -458,20 +458,21 @@ export default function MapComponent() {
       <div style={{ position: "relative", height: "100%" }}> 
       <div
   className={`glass-effect control-panel ${menuVisible ? 'visible' : ''}`}
-  style={{
-    position: "fixed",
-    zIndex: 1,
-    top: "50%",
-    left: "50%",
-    transform: menuVisible ? "translate(-50%, -150%) translate(-50%, -50%)" : "translate(-50%, -260%) translate(-50%, -50%)",
-    padding: "10px",
-    boxShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    maxWidth: "300px",
-    width: "90%",
-    transition: "transform 0.3s ease-in-out",
+style={{
+  position: "fixed",
+  zIndex: 1,
+  top: "50%",
+  left: "50%",
+  transform: menuVisible ? "translate(-50%, -150%)" : "translate(-50%, -260%)",
+  padding: "10px",
+  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.3)",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  maxWidth: "300px",
+  width: "90%",
+  transition: "transform 0.3s ease-in-out",
+
    
   }}
 >
