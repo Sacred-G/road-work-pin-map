@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-
 import "@mantine/core/styles.css";
-import { ColorSchemeScript, MantineProvider } from "@mantine/core";
-import Provider from "../components/sessionProvider";
+import { ColorSchemeScript } from "@mantine/core";
+import Script from "next/script";
+import ClientProviders from "./ClientProviders";
 
 export const metadata: Metadata = {
   title: "Pin-Map",
   description: "Pin any location!",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -17,12 +17,17 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
+        <meta charSet="utf-8" />
+        <title>Pin-Map</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <ColorSchemeScript />
+        <Script
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}`}
+          strategy="beforeInteractive"
+        />
       </head>
       <body>
-        <MantineProvider>
-          <Provider>{children}</Provider>
-        </MantineProvider>
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );

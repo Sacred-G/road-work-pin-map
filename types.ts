@@ -4,3 +4,15 @@ export interface ViewState {
     zoom: number;
   }
   
+
+  export interface pinData{
+
+
+id:number;
+longitude:number;
+latitude:number;
+title:string;
+description:string;
+
+  }
+  

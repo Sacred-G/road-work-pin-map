@@ -1,21 +1,25 @@
 'use client'
-import MapComponent from "../../components/mapComponent";
+
+import dynamic from 'next/dynamic'
 import { Box, Skeleton } from "@mantine/core";
 import { Suspense } from "react";
 
-export default function Home() {
+// Dynamically import the MapComponent with no SSR
+const MapComponent = dynamic(() => import("../../components/mapComponent"), { 
+  ssr: false,
+  loading: () => <Skeleton height="100vh" width="100%" animate={true} />
+});
+
+export default function MapPage() {
   return (
     <Box
       style={{
         width: "100%",
         height: "100vh",
-        position: "absolute",
-        display: "grid",
+        position: "relative",  // Changed from "absolute" to "relative"
       }}
     >
-      <Suspense fallback={<Skeleton height="100%" width="100%" />}>
-        <MapComponent></MapComponent>
-      </Suspense>
+      <MapComponent />
     </Box>
   );
 }

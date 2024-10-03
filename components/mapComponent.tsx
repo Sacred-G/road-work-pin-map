@@ -12,21 +12,35 @@ import ControlPanel from "./controlPanel";
 import MapMarkers from "./marker";
 import PopupCard from "./popupCard";
 import PopupForm from "./popupForm";
-import { fetchPinsData } from "@/lib/data";
+import { fetchPinsData, fetchCategories, fetchUsers } from "@/lib/data";
 import "./glassEffect.css";
 import "./mapbox-directions.css";
 import mapboxgl from "mapbox-gl";
 import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions";
 import _ from "lodash";
+import Navbar from "./navbar";
 
 // Ensure the API key is stored securely
 const mapboxAccessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
+interface PinData {
+  id: string;
+  longitude: number;
+  latitude: number;
+  pin_name: string;
+  category: string;
+  description: string;
+}
+
 export default function MapComponent() {
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [popupInfo, setPopupInfo] = useState(null);
+  const [popupInfo, setPopupInfo] = useState<PinData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showTraffic, setShowTraffic] = useState(false);
+  const [selectedMarker, setSelectedMarker] = useState<PinData | null>(null);
+  const [pinsData, setPinsData] = useState<PinData[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [users, setUsers] = useState<string[]>([]);
 
   const mapStyles = {
     hybrid: "https://api.maptiler.com/maps/hybrid/style.json?key=z77nEry6rP70PZq17SYM",
@@ -61,7 +75,6 @@ export default function MapComponent() {
   });
 
   const searchParams = useSearchParams();
-  const [pinsData, setPinsData] = useState([]);
 
   const fetchPins = React.useCallback(async () => {
     setIsLoading(true);
@@ -81,6 +94,20 @@ export default function MapComponent() {
     setPinsData([]);
     fetchPins();
   }, [fetchPins, searchParams]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchedCategories = await fetchCategories();
+        const fetchedUsers = await fetchUsers();
+        setCategories(fetchedCategories);
+        setUsers(fetchedUsers);
+      } catch (error) {
+        console.error("Error fetching categories and users:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const geoControlRef = useRef<maplibregl.GeolocateControl | null>(null);
   const mapRef = useRef<MapRef | null>(null);
@@ -111,7 +138,6 @@ export default function MapComponent() {
       }
     }
   }, [mapRef.current]);
-
   return (
     <>
       <LoadingOverlay
@@ -165,12 +191,16 @@ export default function MapComponent() {
             showCreateForm={showCreateForm}
           />
 
-          <MapMarkers setPopupInfo={setPopupInfo} pinsData={pinsData} />
+          <MapMarkers
+            setPopupInfo={setPopupInfo}
+            pinsData={pinsData}
+            setSelectedMarker={setSelectedMarker}
+          />
           {popupInfo && (
             <Popup
               anchor="top"
-              longitude={Number((popupInfo as any).longitude)}
-              latitude={Number((popupInfo as any).latitude)}
+              longitude={Number(popupInfo.longitude)}
+              latitude={Number(popupInfo.latitude)}
               onClose={() => setPopupInfo(null)}
             >
               <PopupCard
@@ -192,7 +222,7 @@ export default function MapComponent() {
             <Source
               id="traffic"
               type="vector"
-              url="https://api.mapbox.com/v4/mapbox.mapbox-traffic-v1.json?access_token=pk.eyJ1IjoieWt1c3RhbGxkYXkiLCJhIjoiY2xqNms2ZTc0MDJtczNkcnlsNm9pcmI2cCJ9.G54VqM0ys7e1EE3jAaLGGw"
+              url="https://api.mapbox.com/v4/mapbox.mapbox-traffic-v1.json?access_token=sk.eyJ1Ijoic2JvdWxkaW4iLCJhIjoiY20wd3A5a21tMDRqZjJqb2U3ZzhhbDl1cyJ9.xikk2DHVlMhbheYIXGvgPA"
             >
               <Layer
                 id="traffic-layer"
@@ -219,6 +249,15 @@ export default function MapComponent() {
           latitude={viewState.latitude}
           handleShowCreateForm={handleShowCreateForm}
           showCreateForm={showCreateForm}
+        />
+        <Navbar
+          selectedMarker={selectedMarker}
+          setSelectedMarker={setSelectedMarker}
+          popupInfo={popupInfo}
+          setPopupInfo={setPopupInfo}
+          pinsData={pinsData}
+          categories={categories}
+          users={users}
         />
       </div>
       <style jsx>{`

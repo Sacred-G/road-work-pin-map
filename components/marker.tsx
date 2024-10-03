@@ -10,13 +10,17 @@ interface PinData {
   latitude: number;
 }
 
+interface MapMarkersProps {
+  setPopupInfo: (info: PinData | null) => void;
+  pinsData: PinData[];
+  setSelectedMarker: (marker: PinData | null) => void;
+}
+
 export default function MapMarkers({
   setPopupInfo,
   pinsData,
-}: {
-  setPopupInfo: (info: any) => void;
-  pinsData: PinData[];
-}) {
+  setSelectedMarker,
+}: MapMarkersProps) {
   const pins = useMemo(
     () =>
       pinsData.map((city) => (
@@ -29,12 +33,13 @@ export default function MapMarkers({
           onClick={(e) => {
             e.originalEvent.stopPropagation();
             setPopupInfo(city);
+            setSelectedMarker(city);
           }}
         >
           <Pin size={40} />
         </Marker>
       )),
-    [pinsData, setPopupInfo]
+    [pinsData, setPopupInfo, setSelectedMarker]
   );
 
   return <>{pins}</>;
